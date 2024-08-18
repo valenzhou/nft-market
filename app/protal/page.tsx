@@ -1,12 +1,12 @@
 "use client";
-import { useState } from "react";
-import Blog from "./components/blog";
+import NFTWall from "../components/NFTWall";
+
 export default function Protal() {
-    const [num,setNum] = useState(0);
-    console.log(num);
+
     return (
-        <div>protal
-            <Blog></Blog>
+        <div>
+           <h2 className="pt-6 pl-5 text-lg">MY NFTS:</h2>
+           <NFTWall filter='protal' />
         </div>
         
     );

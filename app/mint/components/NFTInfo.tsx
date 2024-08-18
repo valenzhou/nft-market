@@ -12,8 +12,9 @@ import {
   useWriteContract,
   useEstimateFeesPerGas,
 } from "wagmi";
-const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
+
 export default function NFTInfo() {
+  const NFTADDR = process.env.NEXT_PUBLIC_NFTADDR || "";
   const account = useAccount();
   const [totalSupply, setTotalSupply] = useState(0);
   const [price, setPrice] = useState("0");
@@ -21,17 +22,16 @@ export default function NFTInfo() {
     contracts: [
       {
         abi,
-        address: contractAddress,
+        address: NFTADDR as `0x${string}`,
         functionName: "totalSupply",
       },
       {
         abi,
-        address: contractAddress,
+        address: NFTADDR as `0x${string}`,
         functionName: "mintPrice",
       },
     ],
   });
-  const NFTADDR = process.env.NEXT_PUBLIC_NFTADDR || "";
   const { data: hash, isPending, writeContract } = useWriteContract();
   const { isSuccess: txIsSuccess } = useWaitForTransactionReceipt({
     hash,
@@ -43,7 +43,7 @@ export default function NFTInfo() {
       setTotalSupply(parseInt(nftResult[0]?.result as any));
     }
     if (nftResult && nftResult[1]) {
-      let res = nftResult[1].result;
+      let res = nftResult[1].result || 0;
       setPrice(formatEther(res as bigint));
     }
   }, [isSuccess,isRefetching]);
@@ -61,7 +61,7 @@ export default function NFTInfo() {
         abi,
         address: NFTADDR as `0x${string}`,
         functionName: "mintBYBY",
-        args: [true],
+        args: [1],
         value: parseEther(price),
         maxFeePerGas: feeData?.maxFeePerGas,
     })

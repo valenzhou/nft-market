@@ -5,15 +5,18 @@ import { abi } from "@/app/asserts/BYBYNft.json";
 import { ethers } from "ethers";
 import { useEffect } from "react";
 import { useState } from "react";
-const contractAddress = "0x5FbDB2315678afecb367f032d93F642f64180aa3";
-export default function NFTWall() {
-  const {address} = useAccount();
+export default function NFTWall(props: { filter: string }) {
+  const NFTADDR = process.env.NEXT_PUBLIC_NFTADDR || "";
+  const NEXT_PUBLIC_MARKETADDR = process.env.NEXT_PUBLIC_MARKETADDR || "";
+
+  const { address } = useAccount();
   const client = useClient();
+  const filterType = props.filter || "";
   const transport = client?.transport?.url || "";
   const provider = new ethers.JsonRpcProvider(transport);
   const priviteKey = process.env.NEXT_PUBLIC_KEY1 || "";
   const wallet = new ethers.Wallet(priviteKey, provider);
-  const contract = new ethers.Contract(contractAddress, abi, wallet);
+  const contract = new ethers.Contract(NFTADDR, abi, wallet);
 
   const [nfts, setNfts] = useState<any[]>([]);
 
@@ -71,15 +74,25 @@ export default function NFTWall() {
     });
 
     await new Promise((r) => setTimeout(r, 3000));
-    setNfts(p => (p.concat(...itemArray)))
+    setNfts(() => 
+      [].concat(...itemArray)
+    );
     console.log(nfts);
   }
 
   return (
     <div className="flex flex-wrap">
-      {nfts.map((v,i) => (
-        <NFTCard key={i} {...v}  />
-      ))}
+      {nfts
+        .filter((v) => {
+          return filterType
+            ? filterType === "market"
+              ? v.wallet === NEXT_PUBLIC_MARKETADDR
+              : v.wallet === address
+            : true;
+        })
+        .map((v, i) => (
+          <NFTCard key={i} {...v} {...{ filterType,getNfts }} />
+        ))}
     </div>
   );
 }

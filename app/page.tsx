@@ -12,7 +12,7 @@ export default function Home() {
     </header>
 
     <article style={{padding: '20px'}}>
-      <NFTWall />
+      <NFTWall filter='' />
     </article>
    </main>
   );
