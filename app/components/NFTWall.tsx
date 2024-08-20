@@ -1,13 +1,15 @@
 "use client";
 import { useAccount, useClient, useReadContract } from "wagmi";
 import NFTCard from "./NFTCard";
-import { abi } from "@/app/asserts/BYBYNft.json";
+import { abi } from "@/app/asserts/CreateNft.json";
+import { abi as stakeABI } from "@/app/asserts/MarketStake.json";
 import { ethers } from "ethers";
 import { useEffect } from "react";
 import { useState } from "react";
 export default function NFTWall(props: { filter: string }) {
-  const NFTADDR = process.env.NEXT_PUBLIC_NFTADDR || "";
+  const NFTADDR = process.env.NEXT_PUBLIC_CREATENFTADDR || "";
   const NEXT_PUBLIC_MARKETADDR = process.env.NEXT_PUBLIC_MARKETADDR || "";
+  const NEXT_PUBLIC_MARKETSTAKE = process.env.NEXT_PUBLIC_MARKETSTAKE || "";
 
   const { address } = useAccount();
   const client = useClient();
@@ -26,7 +28,7 @@ export default function NFTWall(props: { filter: string }) {
 
   async function getNfts() {
     const itemArray: any[] = [];
-    contract.totalSupply().then((res) => {
+    contract.getTotalSupply().then((res) => {
       console.log(res);
       let totalSup = parseInt(res);
       for (let index = 0; index < totalSup; index++) {
@@ -42,29 +44,31 @@ export default function NFTWall(props: { filter: string }) {
         const getUri = Uri.then((value) => {
           let str = value;
           let cleanUri =
-            str.replace("ipfs://", "http://gateway.pinata.cloud/ipfs/") +
-            ".json";
-          let metadata = fetch(cleanUri)
-            .then((res) => {
-              return res.json();
-            })
-            .catch((err) => {
-              console.log(err);
-            });
-          return metadata;
-        }).then((value) => {
-          let rawImg = value?.image;
-          let attr = value?.attributes;
-          let image = rawImg.replace("ipfs://", "https://ipfs.io/ipfs/");
+            str.replace("", "http://gateway.pinata.cloud/ipfs/") +
+            "";
+          // let metadata = fetch(cleanUri)
+          //   .then((res) => {
+          //     return res.json();
+          //   })
+          //   .catch((err) => {
+          //     console.log(err);
+          //   });
+          // return metadata;
+          return cleanUri;
+        }).then((uri) => {
+          // let rawImg = value?.image;
+          // let attr = value?.attributes;
+          // let image = rawImg.replace("ipfs://", "https://ipfs.io/ipfs/");
 
           Promise.resolve(owner).then((value) => {
             console.log(value);
             let ownerAddr = value;
             let meta = {
-              name: "BYAC #" + token,
-              img: image,
+              name: "NFT #" + token,
+              // img: image,
+              img: uri,
               tokenId: token,
-              meta: attr,
+              meta: {},
               wallet: ownerAddr,
             };
             itemArray.push(meta);
@@ -80,6 +84,23 @@ export default function NFTWall(props: { filter: string }) {
     console.log(nfts);
   }
 
+  const { data: stakeData, isSuccess } = useReadContract({
+    abi: stakeABI,
+    address: NEXT_PUBLIC_MARKETSTAKE as `0x${string}`,
+    functionName: "nftOfOwner",
+    args: [address],
+  });
+//   const isZeroAddr = useMemo(() => {
+//     return (
+//       approveData &&
+//       isAddressEqual(
+//         approveData as `0x${string}`,
+//         "0x0000000000000000000000000000000000000000"
+//       )
+//     );
+//   }, [approveData]);
+
+
   return (
     <div className="flex flex-wrap">
       {nfts
@@ -87,7 +108,11 @@ export default function NFTWall(props: { filter: string }) {
           return filterType
             ? filterType === "market"
               ? v.wallet === NEXT_PUBLIC_MARKETADDR
-              : v.wallet === address
+              : filterType === 'protal' ?
+                v.wallet === address
+                : filterType === 'stake' ?
+                  (v.wallet === NEXT_PUBLIC_MARKETSTAKE && (stakeData as Array<any> || []).includes(BigInt(v.tokenId))) :
+                  true
             : true;
         })
         .map((v, i) => (

@@ -1,7 +1,10 @@
 import { Button } from "@nextui-org/react";
 import Image from "next/image";
+import { Image as NextImage } from "@nextui-org/react"
 import SellButton from "./SellButton";
 import BuyButton from "./BuyButton";
+import StakeButton from "./StakeButton";
+import UnStake from "./UnStake";
 export default function Page(props: any) {
   const info = props;
   console.log(info);
@@ -22,7 +25,7 @@ export default function Page(props: any) {
               &nbsp;#&nbsp;{info.tokenId} <i className="far fa-heart"></i>
             </span>
           </div>
-          <Image src={`/${info.tokenId}.png`} width={264} height={360} alt="" />
+          <NextImage src={`${info.img}`} width={264} height={280} alt="" />
           <div className="nft-qrcode">
             {/* {info.tokenId} */}
             {/* <span>/023</span> */}
@@ -32,8 +35,8 @@ export default function Page(props: any) {
         <div className="nft-card--footer flex justify-between">
           <div className="nft-time">
             <span>
-              <i className="far fa-clock"></i> <strong>Traits</strong>
-              {info?.meta?.map(
+              <i className="far fa-clock"></i> <strong>{info.name}</strong>
+              {/* {info?.meta?.map(
                 (v: { trait_type: string; value: string }, i: number) => {
                   return (
                     <p key={i}>
@@ -41,7 +44,7 @@ export default function Page(props: any) {
                     </p>
                   );
                 }
-              )}
+              )} */}
             </span>
           </div>
 
@@ -52,7 +55,7 @@ export default function Page(props: any) {
               (info.filterType === "protal" ? (
                 <>
                   <p>
-                    <Button>Stake</Button>
+                    <StakeButton token={info.tokenId} getNfts={info.getNfts} />
                   </p>
                   <p className="mt-4">
                     <SellButton token={info.tokenId} getNfts={info.getNfts} />
@@ -68,9 +71,14 @@ export default function Page(props: any) {
                     <Button onPress={handleStake}>BUY</Button> */}
                   </p>
                 </>
-              ) : (
-                ""
-              ))}
+              ) : info.filterType === "stake" ? (
+                <>
+                <p>
+                  <UnStake token={info.tokenId} getNfts={info.getNfts} />
+                </p>
+              </>
+              ) : ""
+            )}
           </div>
         </div>
       </div>

@@ -1,7 +1,9 @@
 import {buildModule} from "@nomicfoundation/hardhat-ignition/modules";
+import BybyNftModule from "./BYBYNft";
 
 const MarketModule = buildModule("MarketModule",(m) => {
-    const market = m.contract("Market");
+    const {bybyNft} = m.useModule(BybyNftModule);
+    const market = m.contract("MarketV1",[bybyNft]);
     return {market}
 });
 

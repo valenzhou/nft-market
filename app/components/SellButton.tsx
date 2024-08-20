@@ -7,9 +7,9 @@ import {
   useEstimateFeesPerGas,
 } from "wagmi";
 import { abi } from "@/app/asserts/Market.json";
-import { abi as nftABI } from "@/app/asserts/BYBYNft.json";
+// import { abi as nftABI } from "@/app/asserts/BYBYNft.json";
 import { useEffect, useMemo, useState } from "react";
-import { isAddressEqual, parseEther } from "viem";
+import { getAddress, isAddressEqual, parseEther } from "viem";
 import toast, { Toaster } from "react-hot-toast";
 import {
   Modal,
@@ -25,26 +25,26 @@ import { PressEvent } from "@react-types/shared";
 
 export default function SellButton(props: any) {
   const token = props.token;
-  const NEXT_PUBLIC_NFTADDR = process.env.NEXT_PUBLIC_NFTADDR;
+  const NEXT_PUBLIC_CREATENFTADDR = process.env.NEXT_PUBLIC_CREATENFTADDR;
   const NEXT_PUBLIC_MARKETADDR = process.env.NEXT_PUBLIC_MARKETADDR;
   const [price, setPrice] = useState("0.00");
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
-  const { data: approveData, isSuccess } = useReadContract({
-    abi: nftABI,
-    address: NEXT_PUBLIC_NFTADDR as `0x${string}`,
-    functionName: "getApproved",
-    args: [token],
-  });
-  const isZeroAddr = useMemo(() => {
-    return (
-      approveData &&
-      isAddressEqual(
-        approveData as `0x${string}`,
-        "0x0000000000000000000000000000000000000000"
-      )
-    );
-  }, [approveData]);
-  console.log(approveData, token, isZeroAddr);
+//   const { data: approveData, isSuccess } = useReadContract({
+//     abi: nftABI,
+//     address: NEXT_PUBLIC_CREATENFTADDR as `0x${string}`,
+//     functionName: "getApproved",
+//     args: [token],
+//   });
+//   const isZeroAddr = useMemo(() => {
+//     return (
+//       approveData &&
+//       isAddressEqual(
+//         approveData as `0x${string}`,
+//         "0x0000000000000000000000000000000000000000"
+//       )
+//     );
+//   }, [approveData]);
+//   console.log(approveData, token, isZeroAddr);
   const { data: hash, isPending, writeContractAsync } = useWriteContract();
   const { data: apporveData, isSuccess: txIsSuccess } =
     useWaitForTransactionReceipt({
@@ -74,30 +74,31 @@ export default function SellButton(props: any) {
   const handleInputPrice = () => {
     onOpen();
   };
-  const handleApprove = () => {
-    if (isZeroAddr) {
-      writeContractAsync({
-        abi: nftABI,
-        address: NEXT_PUBLIC_NFTADDR as `0x${string}`,
-        functionName: "approve",
-        args: [NEXT_PUBLIC_MARKETADDR, token],
-        maxFeePerGas: feeData?.maxFeePerGas,
-      });
-    } else {
-      handleSell();
-    }
-  };
+//   const handleApprove = () => {
+//     if (isZeroAddr) {
+//       writeContractAsync({
+//         abi: nftABI,
+//         address: NEXT_PUBLIC_CREATENFTADDR as `0x${string}`,
+//         functionName: "approve",
+//         args: [NEXT_PUBLIC_MARKETADDR, token],
+//         maxFeePerGas: feeData?.maxFeePerGas,
+//       });
+//     } else {
+//       handleSell();
+//     }
+//   };
   const handleSell = () => {
     let sellPrice = Number(price);
     if (!sellPrice) {
       toast.error("Incorrect amount");
     } else {
+        
       SellNft({
         abi,
         address: NEXT_PUBLIC_MARKETADDR as `0x${string}`,
-        functionName: "listSale",
-        args: [token, parseEther(sellPrice + "")],
-        value: parseEther("0.00025"),
+        functionName: "createValutItem",
+        args: [NEXT_PUBLIC_CREATENFTADDR,token, parseEther(sellPrice + "")],
+        value: parseEther("0.0025"),
         maxFeePerGas: feeData?.maxFeePerGas,
       });
     }
@@ -139,7 +140,7 @@ export default function SellButton(props: any) {
                 <Button color="danger" variant="light" onPress={onClose}>
                   Close
                 </Button>
-                <Button color="primary" onPress={handleApprove}>
+                <Button color="primary" onPress={handleSell}>
                   Action
                 </Button>
               </ModalFooter>

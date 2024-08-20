@@ -3,7 +3,7 @@ import { expect } from "chai";
 import { loadFixture, time } from "@nomicfoundation/hardhat-toolbox/network-helpers";
 import { formatEther, formatGwei, parseEther } from "viem";
 const { anyValue } = require("@nomicfoundation/hardhat-chai-matchers/withArgs");
-//0x5FbDB2315678afecb367f032d93F642f64180aa
+//
 describe("byby",function(){
     async function deployNftStaking() {
         const [owner, otherAccount] = await hre.ethers.getSigners();

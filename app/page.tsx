@@ -7,8 +7,8 @@ export default function Home() {
   return (
    <main className={styles.mainContainer}>
     <header>
-      <h3 className={styles.title}>BAYC NFTS</h3>
-      <p className={styles.description}>The BAYC {'(DEMO)'} is a collection of 20 unique  NFTs. unique digital collectibles living on the Sepolia test blockchain. </p>
+    <h3 className={styles.title}>NFTS Collections</h3>
+    <p className={styles.description}>You can upload pictures to Mint the NFT, and after the minting you can sell them and stake your assets. </p>
     </header>
 
     <article style={{padding: '20px'}}>

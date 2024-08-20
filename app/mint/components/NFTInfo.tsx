@@ -1,34 +1,46 @@
 "use client";
 import styles from "../page.module.scss";
-import { abi } from "@/app/asserts/BYBYNft.json";
-import { useState } from "react";
+import { abi } from "@/app/asserts/CreateNft.json";
+import { ChangeEventHandler, useState } from "react";
 import { useEffect } from "react";
 import { formatEther, parseEther } from "viem";
-import { Button } from "@nextui-org/react";
+import { Button, Input } from "@nextui-org/react";
 import {
-  useAccount,
+
   useReadContracts,
   useWaitForTransactionReceipt,
   useWriteContract,
   useEstimateFeesPerGas,
+  useReadContract,
 } from "wagmi";
+import UploadFile from "@/app/components/UploadFile";
+import toast, { Toaster } from "react-hot-toast";
+import { useRouter } from "next/navigation";
 
 export default function NFTInfo() {
-  const NFTADDR = process.env.NEXT_PUBLIC_NFTADDR || "";
-  const account = useAccount();
-  const [totalSupply, setTotalSupply] = useState(0);
+  const NFTADDR = process.env.NEXT_PUBLIC_CREATENFTADDR || "";
+  const router = useRouter();
+  const [nftName, setNFTName] = useState(0);
   const [price, setPrice] = useState("0");
-  const { data: nftResult, isSuccess,status,isRefetching, refetch } = useReadContracts({
+  const [nameValue, setNameValue] = useState("");
+  const [desc, setDesc] = useState("");
+  const [uri, setUri] = useState("");
+  const {
+    data: nftResult,
+    isSuccess,
+    status,
+    isRefetching,
+  } = useReadContracts({
     contracts: [
       {
         abi,
         address: NFTADDR as `0x${string}`,
-        functionName: "totalSupply",
+        functionName: "owner",
       },
       {
         abi,
         address: NFTADDR as `0x${string}`,
-        functionName: "mintPrice",
+        functionName: "cost",
       },
     ],
   });
@@ -40,40 +52,67 @@ export default function NFTInfo() {
 
   useEffect(() => {
     if (nftResult && nftResult[0]) {
-      setTotalSupply(parseInt(nftResult[0]?.result as any));
+      setNFTName(parseInt(nftResult[0]?.result as any));
     }
     if (nftResult && nftResult[1]) {
       let res = nftResult[1].result || 0;
       setPrice(formatEther(res as bigint));
     }
-  }, [isSuccess,isRefetching]);
+  }, [isSuccess, isRefetching]);
 
   useEffect(()=>{
     if(txIsSuccess){
-        refetch().then(res => {
-            console.log(res);
-        })
+      router.push('/protal')
     }
   },[txIsSuccess])
 
   const handleMint = () => {
+    if(!uri){
+      return toast.error("please upload NFT image");
+    }
     writeContract({
-        abi,
-        address: NFTADDR as `0x${string}`,
-        functionName: "mintBYBY",
-        args: [1],
-        value: parseEther(price),
-        maxFeePerGas: feeData?.maxFeePerGas,
-    })
+      abi,
+      address: NFTADDR as `0x${string}`,
+      functionName: "mintNFT",
+      args: [uri],
+      value: parseEther(price),
+      maxFeePerGas: feeData?.maxFeePerGas,
+    });
+  };
+  const handleUpload = (res: any) => {
+    console.log(res, res?.IpfsHash);
+    setUri(res?.IpfsHash);
+  };
+  const handleDownlaod = (res: any) => {
+    console.log(res);
   };
 
   return (
     <>
-      <div>
-        <p className={styles.infoRow}>TotalSupply: 20</p>
-        <p className={styles.infoRow}>Minted: {totalSupply || "0"}</p>
-        <p className={styles.infoRow}>Mint Price: {price} SepoliaETH</p>
-      </div>
+    <Toaster />
+      {/* <div>
+        <Input
+          isRequired
+          type="text"
+          label="Name"
+          defaultValue=""
+          value={nameValue}
+          onValueChange={setNameValue}
+          className="max-w-xs"
+        />
+        <p className="mt-4">
+          <Input
+            type="text"
+            value={desc}
+            onValueChange={setDesc}
+            label="Description"
+            defaultValue=""
+            className="max-w-xs"
+          />
+        </p>
+      </div> */}
+
+      <UploadFile upload={handleUpload} download={handleDownlaod} />
 
       <Button
         color="primary"
