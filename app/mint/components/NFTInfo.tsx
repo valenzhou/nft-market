@@ -1,7 +1,7 @@
 "use client";
 import styles from "../page.module.scss";
 import { abi } from "@/app/asserts/CreateNft.json";
-import { ChangeEventHandler, useState } from "react";
+import { useState } from "react";
 import { useEffect } from "react";
 import { formatEther, parseEther } from "viem";
 import { Button, Input } from "@nextui-org/react";
@@ -10,20 +10,22 @@ import {
   useReadContracts,
   useWaitForTransactionReceipt,
   useWriteContract,
-  useEstimateFeesPerGas,
-  useReadContract,
+  useChainId,
 } from "wagmi";
 import UploadFile from "@/app/components/UploadFile";
 import toast, { Toaster } from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import useChainChange from "@/app/utils/useChainChange";
 
 export default function NFTInfo() {
-  const NFTADDR = process.env.NEXT_PUBLIC_CREATENFTADDR || "";
+  const chainId = useChainId();
+  const {
+    NEXT_PUBLIC_CREATENFTADDR,
+  } = useChainChange();
   const router = useRouter();
   const [nftName, setNFTName] = useState(0);
   const [price, setPrice] = useState("0");
-  const [nameValue, setNameValue] = useState("");
-  const [desc, setDesc] = useState("");
+
   const [uri, setUri] = useState("");
   const {
     data: nftResult,
@@ -34,12 +36,12 @@ export default function NFTInfo() {
     contracts: [
       {
         abi,
-        address: NFTADDR as `0x${string}`,
+        address: NEXT_PUBLIC_CREATENFTADDR as `0x${string}`,
         functionName: "owner",
       },
       {
         abi,
-        address: NFTADDR as `0x${string}`,
+        address: NEXT_PUBLIC_CREATENFTADDR as `0x${string}`,
         functionName: "cost",
       },
     ],
@@ -48,7 +50,9 @@ export default function NFTInfo() {
   const { isSuccess: txIsSuccess } = useWaitForTransactionReceipt({
     hash,
   });
-  const { data: feeData } = useEstimateFeesPerGas();
+  // const { data: feeData } = useEstimateFeesPerGas({
+  //   chainId: chainId
+  // });
 
   useEffect(() => {
     if (nftResult && nftResult[0]) {
@@ -72,11 +76,11 @@ export default function NFTInfo() {
     }
     writeContract({
       abi,
-      address: NFTADDR as `0x${string}`,
+      address: NEXT_PUBLIC_CREATENFTADDR as `0x${string}`,
       functionName: "mintNFT",
       args: [uri],
       value: parseEther(price),
-      maxFeePerGas: feeData?.maxFeePerGas,
+      // maxFeePerGas: feeData?.maxFeePerGas,
     });
   };
   const handleUpload = (res: any) => {
@@ -90,27 +94,6 @@ export default function NFTInfo() {
   return (
     <>
     <Toaster />
-      {/* <div>
-        <Input
-          isRequired
-          type="text"
-          label="Name"
-          defaultValue=""
-          value={nameValue}
-          onValueChange={setNameValue}
-          className="max-w-xs"
-        />
-        <p className="mt-4">
-          <Input
-            type="text"
-            value={desc}
-            onValueChange={setDesc}
-            label="Description"
-            defaultValue=""
-            className="max-w-xs"
-          />
-        </p>
-      </div> */}
 
       <UploadFile upload={handleUpload} download={handleDownlaod} />
 
@@ -120,7 +103,7 @@ export default function NFTInfo() {
         onPress={handleMint}
         isLoading={isPending}
       >
-        Mint &nbsp;&nbsp;|&nbsp;&nbsp; {price} SepoliaETH
+        Mint &nbsp;&nbsp;|&nbsp;&nbsp; {price}
       </Button>
     </>
   );

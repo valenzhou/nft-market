@@ -3,7 +3,7 @@ import {
   useReadContract,
   useWaitForTransactionReceipt,
   useWriteContract,
-  useEstimateFeesPerGas,
+  useChainId,
 } from "wagmi";
 import { abi } from "@/app/asserts/MarketStake.json";
 import { abi as nftABI } from "@/app/asserts/CreateNft.json";
@@ -11,12 +11,18 @@ import { useEffect, useMemo, useState } from "react";
 import { getAddress, isAddressEqual, parseEther } from "viem";
 import toast, { Toaster } from "react-hot-toast";
 import { Button } from "@nextui-org/react";
+import useChainChange from "../utils/useChainChange";
+import { useRouter } from "next/navigation";
 
 
 export default function StakeButton(props: any) {
   const token = props.token;
-  const NEXT_PUBLIC_CREATENFTADDR = process.env.NEXT_PUBLIC_CREATENFTADDR;
-  const NEXT_PUBLIC_MARKETSTAKE = process.env.NEXT_PUBLIC_MARKETSTAKE;
+  const router = useRouter();
+  const chainId = useChainId();
+  const {
+    NEXT_PUBLIC_CREATENFTADDR,
+    NEXT_PUBLIC_MARKETSTAKE,
+  } = useChainChange();
 
   const { data: approveData, isSuccess } = useReadContract({
     abi: nftABI,
@@ -49,7 +55,6 @@ export default function StakeButton(props: any) {
     useWaitForTransactionReceipt({
       hash: StakeHash,
     });
-  const { data: feeData } = useEstimateFeesPerGas();
   useEffect(() => {
     txIsSuccess && toast("approve success");
     txIsSuccess && handleStake();
@@ -57,6 +62,7 @@ export default function StakeButton(props: any) {
   useEffect(() => {
     stakeIsSuccess && toast("stake success");
     stakeIsSuccess && props?.getNfts();
+    stakeIsSuccess && router.push('/stake');
   }, [stakeIsSuccess]);
 
   const handleApprove = () => {
@@ -66,7 +72,6 @@ export default function StakeButton(props: any) {
         address: NEXT_PUBLIC_CREATENFTADDR as `0x${string}`,
         functionName: "approve",
         args: [NEXT_PUBLIC_MARKETSTAKE, token],
-        maxFeePerGas: feeData?.maxFeePerGas,
       });
     } else {
         handleStake();
@@ -78,7 +83,6 @@ export default function StakeButton(props: any) {
         address: NEXT_PUBLIC_MARKETSTAKE as `0x${string}`,
         functionName: "stake",
         args: [[token]],
-        maxFeePerGas: feeData?.maxFeePerGas,
       });
   };
 

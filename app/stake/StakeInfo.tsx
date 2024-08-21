@@ -1,7 +1,7 @@
 "use client";
 import {
   useAccount,
-  useEstimateFeesPerGas,
+  useChainId,
   useReadContract,
   useWaitForTransactionReceipt,
   useWriteContract,
@@ -12,9 +12,12 @@ import { useEffect, useMemo } from "react";
 import { formatEther } from "viem";
 import { Button } from "@nextui-org/react";
 import toast from "react-hot-toast";
+import useChainChange from "../utils/useChainChange";
 export default function StakeInfo() {
-  const NEXT_PUBLIC_CREATENFTADDR = process.env.NEXT_PUBLIC_CREATENFTADDR;
-  const NEXT_PUBLIC_MARKETSTAKE = process.env.NEXT_PUBLIC_MARKETSTAKE;
+  const chainId = useChainId();
+  const {
+    NEXT_PUBLIC_MARKETSTAKE,
+  } = useChainChange();
   const { address } = useAccount();
   const { data: stakeData, isSuccess } = useReadContract({
     abi,
@@ -33,14 +36,12 @@ export default function StakeInfo() {
     hash,
     confirmations: 1,
   });
-  const { data: feeData } = useEstimateFeesPerGas();
   const handleClaim = () => {
     writeContractAsync({
       abi,
       address: NEXT_PUBLIC_MARKETSTAKE as `0x${string}`,
       functionName: "claim",
       args: [stakeData],
-      maxFeePerGas: feeData?.maxFeePerGas,
     });
   };
   useEffect(() => {

@@ -1,6 +1,5 @@
-import { Button } from "@nextui-org/react";
 import Image from "next/image";
-import { Image as NextImage } from "@nextui-org/react"
+import { Image as NextImage } from "@nextui-org/react";
 import SellButton from "./SellButton";
 import BuyButton from "./BuyButton";
 import StakeButton from "./StakeButton";
@@ -16,7 +15,6 @@ export default function Page(props: any) {
           <div className="nft-user">
             <Image src="/BYBYLOGO.png" width={30} height={30} alt="" />
             {info.name}
-            {/* <span>owner@{info.wallet}</span> */}
           </div>
         </div>
         <div className="nft-card--content">
@@ -27,8 +25,6 @@ export default function Page(props: any) {
           </div>
           <NextImage src={`${info.img}`} width={264} height={280} alt="" />
           <div className="nft-qrcode">
-            {/* {info.tokenId} */}
-            {/* <span>/023</span> */}
             <i className="fas fa-qrcode"></i>
           </div>
         </div>
@@ -36,21 +32,10 @@ export default function Page(props: any) {
           <div className="nft-time">
             <span>
               <i className="far fa-clock"></i> <strong>{info.name}</strong>
-              {/* {info?.meta?.map(
-                (v: { trait_type: string; value: string }, i: number) => {
-                  return (
-                    <p key={i}>
-                      {v?.trait_type || ""}: {v?.value}
-                    </p>
-                  );
-                }
-              )} */}
             </span>
           </div>
 
           <div className="nft-price">
-            {/* <span>($803.39)</span> */}
-            {/* <i className="fab fa-ethereum"></i> 0.23 ETH */}
             {info.filterType &&
               (info.filterType === "protal" ? (
                 <>
@@ -65,20 +50,17 @@ export default function Page(props: any) {
                 <>
                   <p>
                     <BuyButton token={info.tokenId} getNfts={info.getNfts} />
-                    {/* <p className="pb-4">
-                      <i className="fab fa-ethereum"></i> 0.23 ETH
-                    </p>
-                    <Button onPress={handleStake}>BUY</Button> */}
                   </p>
                 </>
               ) : info.filterType === "stake" ? (
                 <>
-                <p>
-                  <UnStake token={info.tokenId} getNfts={info.getNfts} />
-                </p>
-              </>
-              ) : ""
-            )}
+                  <p>
+                    <UnStake token={info.tokenId} getNfts={info.getNfts} />
+                  </p>
+                </>
+              ) : (
+                ""
+              ))}
           </div>
         </div>
       </div>

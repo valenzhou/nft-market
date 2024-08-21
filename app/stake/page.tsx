@@ -1,6 +1,7 @@
 import styles from "./page.module.scss";
 import NFTWall from "../components/NFTWall";
 import StakeInfo from "./StakeInfo";
+import { Chip } from "@nextui-org/react";
 export default function Stake() {
   return (
     <>
@@ -31,7 +32,9 @@ export default function Stake() {
       </div>
 
       <div className={styles.cardArea}>
-        <p className="pl-4">My Stake:</p>
+        <p className="pl-4">
+        <Chip color="warning" variant="shadow">My Stake:</Chip>
+        </p>
         <NFTWall filter="stake" />
       </div>
     </>

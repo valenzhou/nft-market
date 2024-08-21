@@ -2,20 +2,25 @@
 import {
   useWaitForTransactionReceipt,
   useWriteContract,
-  useEstimateFeesPerGas,
+  useChainId,
 } from "wagmi";
 import { abi } from "@/app/asserts/MarketStake.json";
-import { abi as tokenABI } from "@/app/asserts/MarketToken.json";
-import { useEffect, useMemo, useState } from "react";
-import { getAddress, isAddressEqual, parseEther } from "viem";
+// import { abi as tokenABI } from "@/app/asserts/MarketToken.json";
+import { useEffect} from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { Button } from "@nextui-org/react";
+import useChainChange from "../utils/useChainChange";
+import { useRouter } from "next/navigation";
 
 
 export default function UnStake(props: any) {
   const token = props.token;
-  const NEXT_PUBLIC_MARKENTOKEN = process.env.NEXT_PUBLIC_MARKENTOKEN;
-  const NEXT_PUBLIC_MARKETSTAKE = process.env.NEXT_PUBLIC_MARKETSTAKE;
+  const chainId = useChainId();
+  const router = useRouter();
+  const {
+    NEXT_PUBLIC_MARKETSTAKE,
+    // NEXT_PUBLIC_MARKENTOKEN
+  } = useChainChange();
 
   const { data: hash, isPending, writeContractAsync } = useWriteContract();
   const { isSuccess: txIsSuccess } =
@@ -23,11 +28,11 @@ export default function UnStake(props: any) {
       hash,
       confirmations: 1,
     });
-  const { data: feeData } = useEstimateFeesPerGas();
 
   useEffect(() => {
     txIsSuccess && toast("UnStake success");
     txIsSuccess && props?.getNfts();
+    txIsSuccess && router.push('/protal');
   }, [txIsSuccess]);
 
 
@@ -37,13 +42,11 @@ export default function UnStake(props: any) {
         // address: NEXT_PUBLIC_MARKENTOKEN as `0x${string}`,
         // functionName: "addController",
         // args: [NEXT_PUBLIC_MARKETSTAKE],
-        // maxFeePerGas: feeData?.maxFeePerGas,
 
         abi,
         address: NEXT_PUBLIC_MARKETSTAKE as `0x${string}`,
         functionName: "unstake",
         args: [[token]],
-        maxFeePerGas: feeData?.maxFeePerGas,
       });
   };
 

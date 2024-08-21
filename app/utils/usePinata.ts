@@ -1,6 +1,5 @@
 export default function usePinata() {
     const JWT = process.env.NEXT_PUBLIC_PINATAJWT;
-    // const GATEWAT = process.env.NEXT_PUBLIC_PINATAGATEWAY;
     const GATEWAT = "gateway.pinata.cloud";
 
     async function uploadFileToIPFS(file:File){

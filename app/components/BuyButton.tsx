@@ -2,7 +2,7 @@
 
 import { Button } from "@nextui-org/react";
 import {
-  useEstimateFeesPerGas,
+  useChainId,
   useReadContract,
   useWaitForTransactionReceipt,
   useWriteContract,
@@ -11,11 +11,18 @@ import { abi } from "@/app/asserts/Market.json";
 import { useEffect, useMemo } from "react";
 import { formatEther, parseEther } from "viem";
 import toast, { Toaster } from "react-hot-toast";
+import useChainChange from "../utils/useChainChange";
+import { useRouter } from "next/navigation";
 
 export default function BuyButton(props: any) {
   const token = props.token;
-  const NEXT_PUBLIC_CREATENFTADDR = process.env.NEXT_PUBLIC_CREATENFTADDR;
-  const NEXT_PUBLIC_MARKETADDR = process.env.NEXT_PUBLIC_MARKETADDR;
+  const router = useRouter();
+  const chainId = useChainId();
+  const {
+    NEXT_PUBLIC_CREATENFTADDR,
+    NEXT_PUBLIC_MARKETADDR,
+  } = useChainChange();
+
 
   const { data, isSuccess } = useReadContract({
     abi,
@@ -30,8 +37,6 @@ export default function BuyButton(props: any) {
       hash,
       confirmations: 1,
     });
-  const { data: feeData } = useEstimateFeesPerGas();
-  console.log(data);
   const price = useMemo(() => {
        let current = (data && (data as Array<any>).find(v =>{
         return v.nftContract == NEXT_PUBLIC_CREATENFTADDR && v.tokenId == token;
@@ -49,6 +54,7 @@ export default function BuyButton(props: any) {
   useEffect(() => {
     txIsSuccess && toast("buy success");
     txIsSuccess && props?.getNfts();
+    txIsSuccess && router.push('/protal');
   }, [txIsSuccess]);
   const handleBuy = () => {
     writeContractAsync({
@@ -57,7 +63,6 @@ export default function BuyButton(props: any) {
         functionName: "marketSale",
         args: [NEXT_PUBLIC_CREATENFTADDR,itemId],
         value: parseEther(price),
-        maxFeePerGas: feeData?.maxFeePerGas,
     })
   };
   return (
