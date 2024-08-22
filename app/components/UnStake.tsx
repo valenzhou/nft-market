@@ -6,17 +6,20 @@ import {
 } from "wagmi";
 import { abi } from "@/app/asserts/MarketStake.json";
 // import { abi as tokenABI } from "@/app/asserts/MarketToken.json";
-import { useEffect} from "react";
+import { useEffect, useState} from "react";
 import toast, { Toaster } from "react-hot-toast";
 import { Button } from "@nextui-org/react";
 import useChainChange from "../utils/useChainChange";
 import { useRouter } from "next/navigation";
+import { Spin } from "antd";
 
 
 export default function UnStake(props: any) {
   const token = props.token;
   const chainId = useChainId();
   const router = useRouter();
+  const [spinning, setSpinning] = useState(false);
+
   const {
     NEXT_PUBLIC_MARKETSTAKE,
     // NEXT_PUBLIC_MARKENTOKEN
@@ -30,13 +33,18 @@ export default function UnStake(props: any) {
     });
 
   useEffect(() => {
-    txIsSuccess && toast("UnStake success");
-    txIsSuccess && props?.getNfts();
-    txIsSuccess && router.push('/protal');
+    if(txIsSuccess){
+      setSpinning(()=> false);
+      toast("UnStake success");
+      props?.getNfts();
+      router.push('/protal');
+    }
+    
   }, [txIsSuccess]);
 
 
   const handleUnStake = () => {
+    setSpinning(true);
     writeContractAsync({
         // abi: tokenABI,
         // address: NEXT_PUBLIC_MARKENTOKEN as `0x${string}`,
@@ -53,6 +61,7 @@ export default function UnStake(props: any) {
   return (
     <>
       <Toaster />
+      <Spin spinning={spinning} percent='auto' fullscreen />
       <Button isLoading={isPending} onPress={handleUnStake}>
         UnStake
       </Button>

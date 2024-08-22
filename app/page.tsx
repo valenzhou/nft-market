@@ -9,6 +9,7 @@ export default function Home() {
     <header>
     <h3 className={styles.title}>NFTS Collections</h3>
     <p className={styles.description}>You can upload pictures to Mint the NFT, and after the minting you can sell them and stake your assets. </p>
+    <p className={styles.description}>You can try out these features on the Sepolia test network and BSC test network. </p>
     </header>
 
     <article style={{padding: '20px'}}>

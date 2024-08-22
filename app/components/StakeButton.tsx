@@ -5,6 +5,7 @@ import {
   useWriteContract,
   useChainId,
 } from "wagmi";
+import { Spin } from 'antd';
 import { abi } from "@/app/asserts/MarketStake.json";
 import { abi as nftABI } from "@/app/asserts/CreateNft.json";
 import { useEffect, useMemo, useState } from "react";
@@ -23,7 +24,7 @@ export default function StakeButton(props: any) {
     NEXT_PUBLIC_CREATENFTADDR,
     NEXT_PUBLIC_MARKETSTAKE,
   } = useChainChange();
-
+  const [spinning, setSpinning] = useState(false);
   const { data: approveData, isSuccess } = useReadContract({
     abi: nftABI,
     address: NEXT_PUBLIC_CREATENFTADDR as `0x${string}`,
@@ -56,17 +57,25 @@ export default function StakeButton(props: any) {
       hash: StakeHash,
     });
   useEffect(() => {
-    txIsSuccess && toast("approve success");
-    txIsSuccess && handleStake();
+    if(txIsSuccess){
+      setSpinning(()=> false);
+      toast("approve success");
+      handleStake();
+    }
+  
   }, [txIsSuccess]);
   useEffect(() => {
-    stakeIsSuccess && toast("stake success");
-    stakeIsSuccess && props?.getNfts();
-    stakeIsSuccess && router.push('/stake');
+    if(stakeIsSuccess){
+      setSpinning(()=> false);
+      toast("stake success");
+      props?.getNfts();
+      router.push('/stake');
+    }
   }, [stakeIsSuccess]);
 
   const handleApprove = () => {
     if (isZeroAddr) {
+      setSpinning(true);
       writeContractAsync({
         abi: nftABI,
         address: NEXT_PUBLIC_CREATENFTADDR as `0x${string}`,
@@ -78,6 +87,7 @@ export default function StakeButton(props: any) {
     }
   };
   const handleStake = () => {
+    setSpinning(true);
     StakeNft({
         abi,
         address: NEXT_PUBLIC_MARKETSTAKE as `0x${string}`,
@@ -89,6 +99,7 @@ export default function StakeButton(props: any) {
   return (
     <>
       <Toaster />
+      <Spin spinning={spinning} percent='auto' fullscreen />
       <Button isLoading={isPending || isStakePending} onPress={handleApprove}>
         Stake
       </Button>

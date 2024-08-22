@@ -20,6 +20,7 @@ import {
 } from "@nextui-org/react";
 import useChainChange from "../utils/useChainChange";
 import { useRouter } from "next/navigation";
+import { Spin } from "antd";
 
 export default function SellButton(props: any) {
   const token = props.token;
@@ -29,6 +30,7 @@ export default function SellButton(props: any) {
     useChainChange();
 
   const [price, setPrice] = useState("0.00");
+  const [spinning, setSpinning] = useState(false);
   const { isOpen, onOpen, onOpenChange, onClose } = useDisclosure();
   const { data: hash, isPending, writeContractAsync } = useWriteContract();
   const { data: apporveData, isSuccess: txIsSuccess } =
@@ -50,10 +52,13 @@ export default function SellButton(props: any) {
     txIsSuccess && handleSell();
   }, [txIsSuccess]);
   useEffect(() => {
-    listIsSuccess && toast("listed success");
-    listIsSuccess && props?.getNfts();
     setPrice("0.00");
-    listIsSuccess  && router.push('/market');
+    if(listIsSuccess){
+      setSpinning(false);
+      toast("listed success");
+      props?.getNfts();
+      router.push('/market');
+    }
   }, [listIsSuccess]);
   const handleInputPrice = () => {
     onOpen();
@@ -76,6 +81,7 @@ export default function SellButton(props: any) {
     if (!sellPrice) {
       toast.error("Incorrect amount");
     } else {
+      setSpinning(true);
       SellNft({
         abi,
         address: NEXT_PUBLIC_MARKETADDR as `0x${string}`,
@@ -90,6 +96,7 @@ export default function SellButton(props: any) {
   return (
     <>
       <Toaster />
+      <Spin spinning={spinning} percent='auto' fullscreen />
       <Button isLoading={isPending || isSellPending} onPress={handleInputPrice}>
         Sale
       </Button>

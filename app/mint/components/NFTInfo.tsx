@@ -1,7 +1,7 @@
 "use client";
 import styles from "../page.module.scss";
 import { abi } from "@/app/asserts/CreateNft.json";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { useEffect } from "react";
 import { formatEther, parseEther } from "viem";
 import { Button, Input } from "@nextui-org/react";
@@ -26,7 +26,7 @@ export default function NFTInfo() {
   const [nftName, setNFTName] = useState(0);
   const [price, setPrice] = useState("0");
 
-  const [uri, setUri] = useState("");
+  const currentURI = useRef("");
   const {
     data: nftResult,
     isSuccess,
@@ -71,6 +71,9 @@ export default function NFTInfo() {
   },[txIsSuccess])
 
   const handleMint = () => {
+    const uri = currentURI.current;
+    console.log(uri)
+    return;
     if(!uri){
       return toast.error("please upload NFT image");
     }
@@ -85,7 +88,8 @@ export default function NFTInfo() {
   };
   const handleUpload = (res: any) => {
     console.log(res, res?.IpfsHash);
-    setUri(res?.IpfsHash);
+    currentURI.current = res?.IpfsHash;
+    // setUri();
   };
   const handleDownlaod = (res: any) => {
     console.log(res);

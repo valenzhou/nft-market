@@ -66,7 +66,7 @@ export default function NFTWall(props: { filter: string }) {
     if(nftAllDataSuccess && nftOwnerDataSuccess){
       getNfts();
     }
-  },[nftAllDataSuccess,nftOwnerDataSuccess])
+  },[nftAllDataSuccess,nftOwnerDataSuccess,chainId])
   function getNfts(){
     let data = (nftAllData as any[] || []);
     let ownerData = (nftOwnerAllData as any[] || []);

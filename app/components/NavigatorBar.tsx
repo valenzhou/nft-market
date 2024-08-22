@@ -59,7 +59,7 @@ export default function NavigatorBar() {
       </NavbarContent>
 
       <NavbarContent as="div" justify="end">
-      <ConnectButton /> 
+      <ConnectButton accountStatus="address" showBalance={false} /> 
       </NavbarContent>
     </Navbar>
   );

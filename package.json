@@ -12,6 +12,7 @@
     "@nextui-org/react": "^2.4.6",
     "@rainbow-me/rainbowkit": "^2.1.4",
     "@tanstack/react-query": "^5.51.23",
+    "antd": "^5.20.2",
     "axios": "^1.7.3",
     "ethers": "^6.13.2",
     "filepond": "^4.31.2",
