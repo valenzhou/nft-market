@@ -10,7 +10,7 @@
 
 > A web3 dapp project about nft casting, trading, and staking.Front use: Nextjs,Wagmi,rainbowkit,Next-ui.
 
-### 🏠 [Homepage](www.waitslot.com)
+### 🏠 [Homepage](https://nft-market-seven-phi.vercel.app/)
 
 ## 🚀 Usage
 
