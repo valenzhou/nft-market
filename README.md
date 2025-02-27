@@ -8,7 +8,7 @@
   </a>
 </p>
 
-> A web3 dapp project about nft casting, trading, and staking.Front use: Nextjs,Wagmi,rainbowkit,Next-ui.
+> A web3 dapp project about nft casting, trading, and staking.Front use: Nextjs,Wagmi,rainbowkit,Next-ui,React18.
 
 ### 🏠 [Homepage](https://nft-market-seven-phi.vercel.app/)
 
@@ -31,7 +31,7 @@ npm run start
 cd my_contract
 npm install
 npx hardhat compile
-# network support Sepolia and BSC Test Net 
+# network support Sepolia and BSC Test Net
 npx hardhat ignition deploy ./igniton/modules/MarketStake.ts --network sepolia
 # You may need to configure some variables on your hardhat,for example WalletPrivateKey
 npx hardhat vars set SEPOLIA_ACCOUNT1_KEY
