@@ -8,7 +8,7 @@
   </a>
 </p>
 
-> A web3 dapp project about nft casting, trading, and staking.Front use: Nextjs,Wagmi,rainbowkit,Next-ui,React18.
+> A web3 dapp project about nft casting, trading, and staking.Front use: Nextjs,Wagmi,rainbowkit,Next-ui,React18.test.
 
 ### 🏠 [Homepage](https://nft-market-seven-phi.vercel.app/)
 
@@ -41,12 +41,13 @@ npx hardhat vars set SEPOLIA_ACCOUNT1_KEY
 
 👤 **valen zhou**
 
-* Website: zhouwenlong.com.cn
-* Github: [@valenzhou](https://github.com/valenzhou)
+- Website: zhouwenlong.com.cn
+- Github: [@valenzhou](https://github.com/valenzhou)
 
 ## Show your support
 
 Give a ⭐️ if this project helped you!
 
-***
+---
+
 _This README was generated with ❤️ by [readme-md-generator](https://github.com/kefranabg/readme-md-generator)_
