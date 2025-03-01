@@ -8,7 +8,7 @@
   </a>
 </p>
 
-> A web3 dapp project about nft casting, trading, and staking.Front use: Nextjs,Wagmi,rainbowkit,Next-ui,React18.test.
+> A web3 dapp project about nft casting, trading, and staking.Front use: Nextjs,Wagmi,rainbowkit,Next-ui,React18.test123456
 
 ### 🏠 [Homepage](https://nft-market-seven-phi.vercel.app/)
 
